@@ -1,4 +1,4 @@
-from checkmate import checkmate
+from checkmate import best_move
 
 def main():
     board = """\
@@ -7,7 +7,7 @@ R...
 ..P.
 ....\
 """
-    checkmate(board)
+    best_move(board)
 try:
     if __name__ == "__main__":
         main()
