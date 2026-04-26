@@ -1,0 +1,84 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+/* --- VARIABLES --- */
+:root {
+  --dark: #7a4f3a;
+  --light: #e6c7a3;
+  --border: #3e2a22;
+  --size: 64px;
+  --radius: 12px;
+}
+
+/* --- RESET --- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* --- BASE --- */
+body {
+  font-family: 'Roboto', sans-serif;
+  height: 100vh;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, #1f1f2e, #2c2c3e);
+  color: #fff;
+}
+
+h1 {
+  margin-bottom: 20px;
+  letter-spacing: 2px;
+  font-weight: 600;
+  opacity: 0.9;
+}
+
+/* --- BOARD --- */
+.board {
+  display: grid;
+  grid-template-columns: repeat(8, var(--size));
+  grid-template-rows: repeat(8, var(--size));
+
+  padding: 10px;
+  border-radius: var(--radius);
+
+  /* glass + shadow look */
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+
+  border: 2px solid rgba(255,255,255,0.1);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+}
+
+/* --- SQUARES --- */
+.square {
+  display: grid;
+  place-items: center;
+  transition: 0.2s;
+}
+
+.square.white {
+  background: var(--light);
+}
+
+.square.black {
+  background: var(--dark);
+}
+
+/* subtle hover effect */
+.square:hover {
+  filter: brightness(1.1);
+}
+
+/* --- PIECES --- */
+.piece {
+  width: 80%;
+  height: 80%;
+  cursor: grab;
+  transition: transform 0.15s ease;
+}
+
+.piece:active {
+  cursor: grabbing;
+  transform: scale(1.1);
+}
