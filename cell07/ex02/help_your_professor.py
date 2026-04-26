@@ -17,5 +17,5 @@ class_3C = {
 def average(x):
     return mean(x.values())
 
-print(average(class_3B))
-print(average(class_3C))
+print(f"Average for class 3B: {average(class_3B)}")
+print(f"verage for class 3C: {average(class_3C)}")
