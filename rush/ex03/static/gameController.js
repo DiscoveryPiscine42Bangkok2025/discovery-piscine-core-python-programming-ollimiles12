@@ -15,6 +15,8 @@ let currentBoardStr =
 "PPPPPPPP\n" +
 "RNBQKBNR";
 
+let currentTurn = 'w';
+
 const pieceToChar = {
     'king': 'k', 'queen': 'q', 'rook': 'r', 'bishop': 'b', 'knight': 'n', 'pawn': 'p'
 };
@@ -26,6 +28,8 @@ function renderBoardFromText(boardStr) {
     currentBoardStr = boardStr;
     boardInput.value = boardStr;
     const lines = boardStr.split('\n');
+    
+    document.querySelector('.header p').textContent = `Setup a puzzle or Play! Current turn: ${currentTurn === 'w' ? 'White' : 'Black'}`;
     
     for (let r = 0; r < 8; r++) {
         for (let c = 0; c < 8; c++) {
@@ -73,11 +77,22 @@ document.querySelectorAll('.board .square').forEach(sq => {
             body: JSON.stringify({
                 board: currentBoardStr,
                 from: { r: parseInt(sr), c: parseInt(sc) },
-                to: { r: dr, c: dc }
+                to: { r: dr, c: dc },
+                turn: currentTurn
             })
         });
         
         const data = await response.json();
+        
+        if (!data.valid) {
+            resultDiv.textContent = `❌ Invalid Move: ${data.message}`;
+            resultDiv.className = "result fail";
+        } else {
+            currentTurn = data.turn;
+            resultDiv.textContent = "✅ Move played.";
+            resultDiv.className = "result success";
+        }
+        
         renderBoardFromText(data.board);
     });
 });

@@ -47,9 +47,15 @@ def api_move():
     board = data.get("board", "")
     from_pos = data.get("from")
     to_pos = data.get("to")
+    turn = data.get("turn", "w")
     
-    new_board = make_move(board, from_pos, to_pos)
-    return jsonify({"board": new_board})
+    valid, new_turn, new_board, msg = make_move(board, from_pos, to_pos, turn)
+    return jsonify({
+        "valid": valid,
+        "board": new_board,
+        "turn": new_turn,
+        "message": msg
+    })
 
 if __name__ == "__main__":
     app.run(debug=True)
