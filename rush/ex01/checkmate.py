@@ -30,20 +30,20 @@ def checkmate(p):
             return
 
     for bx, by in bishops:
-        for i in range(3):
+        for i in range(4):
             if (bx - i, by - i) == king or (bx - i, by + i) == king or (bx + i, by - i) == king or (bx + i, by + i) == king:
                 print("Success")
                 return
 
     for rx, ry in rooks:
-        for i in range(3):
+        for i in range(4):
             if (rx, ry - i) == king or (rx, ry + i) == king or (rx - i, ry) == king or (rx + i, ry) == king:
                 print("Success")
                 return
     
     for qx,qy in queens:
-        for i in range(3):
-            if (rx, ry - i) == king or (rx, ry + i) == king or (rx - i, ry) == king or (rx + i, ry) == king or (bx - i, by - i) == king or (bx - i, by + i) == king or (bx + i, by - i) == king or (bx + i, by + i) == king:
+        for i in range(4):
+            if (qx, qy - i) == king or (qx, qy + i) == king or (qx - i, qy) == king or (qx + i, qy) == king or (qx - i, qy - i) == king or (qx - i, qy + i) == king or (qx + i, qy - i) == king or (qx + i, qy + i) == king:
                 print("Success")
                 return
     print("No checkmate")
