@@ -1,7 +1,7 @@
 def checkmate(p):
     rows = p.split('\n')
     grid = [list(row) for row in rows]
-
+    n = len(grid)
     king = None
     queens = []
     bishops = []
@@ -39,19 +39,19 @@ def checkmate(p):
             return True
 
     for bx, by in bishops:
-        for i in range(1, 4):
+        for i in range(1, n):
             if (bx - i, by - i) == king or (bx - i, by + i) == king or (bx + i, by - i) == king or (bx + i, by + i) == king:
                 print("Success")
                 return True  # fix #1
 
     for rx, ry in rooks:
-        for i in range(1, 4):
+        for i in range(1, n):
             if (rx, ry - i) == king or (rx, ry + i) == king or (rx - i, ry) == king or (rx + i, ry) == king:
                 print("Success")
                 return True  # fix #1
 
     for qx, qy in queens:
-        for i in range(1, 4):
+        for i in range(1, n):
             if (qx, qy - i) == king or (qx, qy + i) == king or (qx - i, qy) == king or (qx + i, qy) == king or (qx - i, qy - i) == king or (qx - i, qy + i) == king or (qx + i, qy - i) == king or (qx + i, qy + i) == king:
                 print("Success")
                 return True  # fix #1

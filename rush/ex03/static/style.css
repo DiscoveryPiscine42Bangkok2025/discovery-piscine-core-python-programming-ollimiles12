@@ -1,5 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
-
+@import url('https://googleapis.com');
 /* --- VARIABLES --- */
 :root {
   --dark: #7a4f3a;
@@ -127,7 +127,8 @@ h1 {
 .controls {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  justify-content: center; /* <-- Add this line */
+  gap: 20px;
   background: rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(10px);
   padding: 25px;
@@ -135,6 +136,7 @@ h1 {
   border: 2px solid rgba(255,255,255,0.1);
   box-shadow: 0 20px 40px rgba(0,0,0,0.6);
   min-width: 280px;
+  min-height: 200px;
 }
 
 button {
@@ -171,7 +173,8 @@ button:hover {
   font-weight: bold;
 }
 
-.piece-selector button {
+/* Only the piece icon buttons get the small square style */
+.piece-selector .addBtn {
   font-size: 24px;
   padding: 5px;
   margin: 3px;
@@ -181,8 +184,59 @@ button:hover {
   justify-content: center;
   align-items: center;
 }
+
+/* Row that holds the piece icon buttons */
+.piece-selector .piece-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 30px;
+}
+
+/* Color toggle button — full width, clearly labeled */
+#colorToggleBtn {
+  width: 100%;
+  font-size: 14px;
+  padding: 10px 15px;
+  background: #4a6fa5;
+  color: #fff;
+  border-radius: 6px;
+  margin-bottom: 4px;
+  text-align: center;
+}
+
+#colorToggleBtn:hover {
+  background: #5a85c5;
+}
+
 #clearBtn {
   font-size: 14px;
   width: 100%;
   margin-top: 10px;
 }
+
+/*time*/
+.time {
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* <-- Add this line */
+  gap: 20px;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  padding: 25px;
+  border-radius: var(--radius);
+  border: 2px solid rgba(255,255,255,0.1);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+}
+
+.digital-clock {
+    font-family: monospace;
+    font-size: 20px;
+    color: black;
+    padding: 10px;
+    border-radius: 6px;
+    text-align: center;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
