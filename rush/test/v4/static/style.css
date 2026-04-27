@@ -1,0 +1,499 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+@import url('https://googleapis.com');
+/* --- VARIABLES --- */
+:root {
+  --dark: #7a4f3a;
+  --light: #e6c7a3;
+  --border: #3e2a22;
+  --size: 64px;
+  --radius: 12px;
+}
+
+/* --- RESET --- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* --- BASE --- */
+body {
+  font-family: 'Roboto', sans-serif;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #1f1f2e, #2c2c3e);
+  color: #fff;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.game-container {
+  display: flex;
+  gap: 30px;
+  align-items: flex-start;
+}
+
+.board-column {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+h1 {
+  margin-bottom: 5px;
+  letter-spacing: 2px;
+  font-weight: 600;
+  opacity: 0.9;
+}
+
+/* --- HISTORY PANEL --- */
+.history-panel {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(255,255,255,0.1);
+  border-radius: var(--radius);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+  padding: 16px;
+  width: 100%;
+}
+
+.history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.history-title {
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 1px;
+  opacity: 0.85;
+  margin: 0;
+}
+
+.undo-btn {
+  padding: 6px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 6px;
+  border: 2px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.08);
+  color: #fff;
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+.undo-btn:hover {
+  background: rgba(244, 67, 54, 0.25);
+  border-color: rgba(244, 67, 54, 0.4);
+  color: #ef9a9a;
+}
+
+.move-list {
+  max-height: 150px;
+  overflow-y: auto;
+  font-family: 'Roboto Mono', monospace;
+  font-size: 13px;
+  line-height: 1.8;
+  color: rgba(255,255,255,0.85);
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,0.15) transparent;
+}
+
+.move-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.move-list::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.15);
+  border-radius: 3px;
+}
+
+.move-row {
+  display: flex;
+  gap: 6px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  transition: 0.15s ease;
+}
+
+.move-row:hover {
+  background: rgba(255,255,255,0.06);
+}
+
+.move-num {
+  color: rgba(255,255,255,0.4);
+  min-width: 28px;
+  text-align: right;
+}
+
+.move-white, .move-black {
+  min-width: 80px;
+}
+
+.move-white {
+  color: var(--light);
+}
+
+.move-black {
+  color: #aaa;
+}
+
+.move-empty {
+  color: rgba(255,255,255,0.3);
+  font-style: italic;
+  text-align: center;
+  padding: 8px 0;
+  margin: 0;
+}
+
+/* --- BOARD --- */
+.board {
+  display: grid;
+  grid-template-columns: repeat(8, var(--size));
+  grid-template-rows: repeat(8, var(--size));
+
+  padding: 10px;
+  border-radius: var(--radius);
+
+  /* glass + shadow look */
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+
+  border: 2px solid rgba(255,255,255,0.1);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+}
+
+/* --- SQUARES --- */
+.square {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 44px;
+  cursor: pointer;
+  user-select: none;
+  transition: 0.2s;
+  color: #111;
+}
+
+.square.white {
+  background: var(--light);
+}
+
+.square.black {
+  background: var(--dark);
+}
+
+/* subtle hover effect */
+.square:hover {
+  filter: brightness(1.1);
+}
+
+.square.selected {
+  outline: 4px solid #ffeb3b;
+  outline-offset: -4px;
+  background-color: rgba(255, 235, 59, 0.4);
+}
+
+.piece {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  cursor: grab;
+}
+
+.piece:active {
+  cursor: grabbing;
+}
+
+.piece.king::after { content: "♚"; }
+.piece.queen::after { content: "♛"; }
+.piece.rook::after { content: "♜"; }
+.piece.bishop::after { content: "♝"; }
+.piece.knight::after { content: "♞"; }
+.piece.pawn::after { content: "♟"; }
+
+.piece.white-piece {
+  color: #fff;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+
+.piece.black-piece {
+  color: #111;
+  text-shadow: 0 1px 2px rgba(255,255,255,0.3);
+}
+
+/* --- CONTROLS --- */
+.controls {
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* <-- Add this line */
+  gap: 20px;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  padding: 25px;
+  border-radius: var(--radius);
+  border: 2px solid rgba(255,255,255,0.1);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+  min-width: 280px;
+  min-height: 200px;
+}
+
+button {
+  padding: 12px 15px;
+  font-size: 16px;
+  cursor: pointer;
+  border: none;
+  border-radius: 6px;
+  background: var(--light);
+  color: var(--border);
+  font-weight: bold;
+  transition: background 0.2s;
+}
+
+button:hover {
+  background: #fff;
+}
+
+.result {
+  padding: 10px;
+  border-radius: 6px;
+  background: #333;
+  color: #fff;
+  text-align: center;
+  font-weight: 500;
+}
+
+.result.success { background: #4caf50; }
+.result.fail { background: #f44336; }
+.result.loading { background: #ff9800; }
+
+.piece-selector p {
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+/* Only the piece icon buttons get the small square style */
+.piece-selector .addBtn {
+  font-size: 24px;
+  padding: 5px;
+  margin: 3px;
+  width: 40px;
+  height: 40px;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Row that holds the piece icon buttons */
+.piece-selector .piece-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 30px;
+}
+
+/* Color toggle button — full width, clearly labeled */
+#colorToggleBtn {
+  width: 100%;
+  font-size: 14px;
+  padding: 10px 15px;
+  background: #4a6fa5;
+  color: #fff;
+  border-radius: 6px;
+  margin-bottom: 4px;
+  text-align: center;
+}
+
+#colorToggleBtn:hover {
+  background: #5a85c5;
+}
+
+#clearBtn {
+  font-size: 14px;
+  width: 100%;
+  margin-top: 10px;
+}
+
+/*time*/
+.time {
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* <-- Add this line */
+  gap: 20px;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  padding: 25px;
+  border-radius: var(--radius);
+  border: 2px solid rgba(255,255,255,0.1);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+}
+
+.digital-clock {
+    font-family: monospace;
+    font-size: 20px;
+    color: black;
+    padding: 10px;
+    border-radius: 6px;
+    text-align: center;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+/* --- BOT CONTROLS --- */
+.bot-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  padding: 20px;
+  border-radius: var(--radius);
+  border: 2px solid rgba(255,255,255,0.1);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+}
+
+.bot-title {
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 1px;
+  opacity: 0.85;
+  margin: 0;
+}
+
+.bot-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.bot-label {
+  font-size: 14px;
+  font-weight: 500;
+  opacity: 0.75;
+  white-space: nowrap;
+  min-width: 75px;
+}
+
+/* toggle button */
+.bot-toggle-btn {
+  width: 100%;
+  padding: 10px 15px;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  border-radius: 8px;
+  border: 2px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.08);
+  color: #fff;
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+.bot-toggle-btn:hover {
+  background: rgba(255,255,255,0.14);
+  border-color: rgba(255,255,255,0.2);
+}
+
+.bot-toggle-btn.active {
+  background: rgba(76, 175, 80, 0.3);
+  border-color: rgba(76, 175, 80, 0.5);
+  color: #81c784;
+}
+
+/* --- BOT SELECT --- */
+.botselect,
+.botselect * {
+  box-sizing: border-box;
+  font-family: 'Roboto', sans-serif;
+}
+
+/* enable custom select */
+select.botselect,
+select.botselect::picker(select) {
+  appearance: base-select;
+}
+
+/* main select */
+select.botselect {
+  flex: 1;
+  min-width: 0;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 2px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.08);
+  backdrop-filter: blur(10px);
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.25s ease;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+/* hover */
+select.botselect:hover {
+  background: rgba(255,255,255,0.12);
+  border-color: rgba(255,255,255,0.18);
+}
+
+/* focus */
+select.botselect:focus {
+  outline: none;
+  border-color: var(--light);
+  box-shadow:
+    0 0 0 3px rgba(230,199,163,0.25),
+    0 4px 12px rgba(0,0,0,0.2);
+}
+
+/* arrow */
+select.botselect::picker-icon {
+  color: var(--light);
+  transition: 0.25s ease;
+}
+
+/* rotate arrow when open */
+select.botselect:open::picker-icon {
+  rotate: 180deg;
+}
+
+/* dropdown */
+select.botselect::picker(select) {
+  border: 2px solid rgba(255,255,255,0.08);
+  border-radius: 12px;
+  padding: 8px;
+  margin-top: 8px;
+  background: rgba(30, 25, 25, 0.95);
+  backdrop-filter: blur(14px);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+}
+
+/* options */
+select.botselect option {
+  padding: 12px;
+  border-radius: 8px;
+  color: white;
+  background: transparent;
+  transition: 0.2s;
+}
+
+/* hover option */
+select.botselect option:hover,
+select.botselect option:focus {
+  background: rgba(230,199,163,0.18);
+}
+
+/* selected option */
+select.botselect option:checked {
+  background: rgba(230,199,163,0.28);
+  color: var(--light);
+  font-weight: 700;
+}
