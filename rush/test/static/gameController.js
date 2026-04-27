@@ -112,9 +112,18 @@ document.querySelectorAll('.board .square').forEach(sq => {
             } else if (status === 'check') {
                 resultDiv.textContent = `⚠️ Check! ${currentTurn === 'w' ? 'White' : 'Black'} is in check.`;
                 resultDiv.className = "result loading";
+                if (botEnabled && currentTurn === botColor) {
+                    setTimeout(triggerBotMove, 100);
+                }
+            } else if (status === 'draw') {
+                resultDiv.textContent = `🤝 Draw!`;
+                resultDiv.className = "result loading";
             } else {
                 resultDiv.textContent = `✅ Move played. ${currentTurn === 'w' ? "White" : "Black"}'s turn.`;
                 resultDiv.className = "result success";
+                if (botEnabled && currentTurn === botColor) {
+                    setTimeout(triggerBotMove, 100);
+                }
             }
         }
 
@@ -123,6 +132,91 @@ document.querySelectorAll('.board .square').forEach(sq => {
 });
 
 window.addEventListener("DOMContentLoaded", () => renderBoardFromText(currentBoardStr));
+
+// --- Bot Logic ---
+let botEnabled = false;
+let botColor = 'b'; // Assume bot plays black by default
+
+const botToggleBtn = document.getElementById("botToggleBtn");
+const eloSelect = document.getElementById("eloSelect");
+
+if (botToggleBtn) {
+    botToggleBtn.addEventListener("click", () => {
+        botEnabled = !botEnabled;
+        botToggleBtn.textContent = `Bot: ${botEnabled ? "ON" : "OFF"}`;
+        
+        if (botEnabled && currentTurn === botColor) {
+            triggerBotMove();
+        }
+    });
+}
+
+async function triggerBotMove() {
+    if (!botEnabled || currentTurn !== botColor) return;
+    
+    resultDiv.textContent = "Bot is thinking...";
+    resultDiv.className = "result loading";
+    
+    try {
+        const elo = parseInt(eloSelect.value) || 1500;
+        const res = await fetch('/api/bot_move', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                board: currentBoardStr,
+                turn: currentTurn,
+                en_passant_target: enPassantTarget,
+                castling_rights: castlingRights,
+                elo: elo
+            })
+        });
+        
+        const data = await res.json();
+        if (data.from && data.to) {
+            const moveRes = await fetch('/api/move', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    board: currentBoardStr,
+                    from: data.from,
+                    to: data.to,
+                    turn: currentTurn,
+                    en_passant_target: enPassantTarget,
+                    castling_rights: castlingRights,
+                    promotion: data.promotion
+                })
+            });
+            const moveData = await moveRes.json();
+            
+            if (moveData.valid) {
+                currentTurn = moveData.turn;
+                enPassantTarget = moveData.en_passant_target || null;
+                castlingRights = moveData.castling_rights || castlingRights;
+                
+                const status = moveData.status;
+                if (status === 'checkmate') {
+                    resultDiv.textContent = `🏆 Checkmate! ${currentTurn === 'w' ? 'Black' : 'White'} wins!`;
+                    resultDiv.className = "result success";
+                } else if (status === 'stalemate' || status === 'draw') {
+                    resultDiv.textContent = `🤝 Draw!`;
+                    resultDiv.className = "result loading";
+                } else {
+                    resultDiv.textContent = `✅ Bot moved. ${currentTurn === 'w' ? "White" : "Black"}'s turn.`;
+                    resultDiv.className = "result success";
+                }
+                
+                renderBoardFromText(moveData.board);
+            }
+        } else {
+            throw new Error(data.error || "No move returned");
+        }
+    } catch (e) {
+        console.error(e);
+        resultDiv.textContent = "Bot error!";
+        resultDiv.className = "result fail";
+    }
+}
+
 
 // --- Piece Placement (Puzzle Mode) ---
 const addBtns = document.querySelectorAll('.addBtn');

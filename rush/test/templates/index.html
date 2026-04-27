@@ -12,7 +12,7 @@
 <body>
     <div id="main">
         <div class="header">
-            <h1>Chess Puzzle Analyzer</h1>
+            <h1>Chess</h1>
             <p>Setup a puzzle or Play! Current turn: White</p>
         </div>
 
@@ -109,6 +109,19 @@
                         <button class="addBtn" data-piece="pawn">♟</button>
                     </div>
                     <button id="clearBtn">Clear</button>
+                </div>
+
+                <div class="bot-controls" style="margin-top: 15px;">
+                    <p style="font-weight:bold;margin-bottom:8px;">🤖 PLAY STOCKFISH</p>
+                    <button id="botToggleBtn">Bot: OFF</button>
+                    <label for="eloSelect" style="margin-left:10px;">Difficulty:</label>
+                    <select id="eloSelect">
+                        <option value="100">100 (Beginner)</option>
+                        <option value="800">800 (Novice)</option>
+                        <option value="1500" selected>1500 (Intermediate)</option>
+                        <option value="2500">2500 (Advanced)</option>
+                        <option value="3000">3000 (Grandmaster)</option>
+                    </select>
                 </div>
 
                 <div class="time">
