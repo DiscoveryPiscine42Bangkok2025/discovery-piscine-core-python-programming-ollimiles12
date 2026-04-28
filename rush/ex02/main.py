@@ -5,7 +5,7 @@ def main():
 R...
 ...K
 ..P.
-....\
+.Q..\
 """
     best_move(board)
 try:

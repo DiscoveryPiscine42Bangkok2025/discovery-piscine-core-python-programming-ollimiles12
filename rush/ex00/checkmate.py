@@ -1,7 +1,13 @@
 def checkmate(p):
-    #split part
+
     rows = p.split('\n')
-    grid = [list(row) for row in rows] 
+    grid = [list(row) for row in rows]
+
+    row_lengths = [len(row) for row in grid]
+    if len(set(row_lengths)) != 1 or len(grid) != row_lengths[0]:
+        print("Error")
+        return False
+
     n = len(grid)
     king = None
     queens = []
@@ -9,52 +15,70 @@ def checkmate(p):
     pawns = []
     rooks = []
 
-    for x in range(len(grid)):        
-        for y in range(len(grid[x])): 
-            sector_value = grid[x][y]
-            if "R" in sector_value:
-                rooks.append((x,y))
-            elif "P" in sector_value:
-                pawns.append((x,y))
-            elif "B" in sector_value:
-                bishops.append((x,y))
-            elif "Q"in sector_value:
-                queens.append((x,y))
-            elif sector_value == "K":
+    for x in range(n):
+        for y in range(n):
+            cell = grid[x][y]
+            if cell == 'R':
+                rooks.append((x, y))
+            elif cell == 'P':
+                pawns.append((x, y))
+            elif cell == 'B':
+                bishops.append((x, y))
+            elif cell == 'Q':
+                queens.append((x, y))
+            elif cell == 'K':
                 if king is None:
                     king = (x, y)
                 else:
-                    print("Multiple Kings found")
+                    print("Error")
                     return False
 
     if king is None:
-        print("No King")
+        print("Error")
         return False
 
-    #analyzed
     for px, py in pawns:
         if (px - 1, py - 1) == king or (px - 1, py + 1) == king:
             print("Success")
             return True
-        if (px + 1, py - 1) == king or (px + 1, py + 1) == king:
-            print("Success")
-            return True
 
     for bx, by in bishops:
-        for i in range(1, n):
-            if (bx - i, by - i) == king or (bx - i, by + i) == king or (bx + i, by - i) == king or (bx + i, by + i) == king:
-                print("Success")
-                return
+        for dx, dy in [(-1, -1), (-1, 1), (1, -1), (1, 1)]:
+            for i in range(1, n):
+                nx, ny = bx + dx * i, by + dy * i
+                if not (0 <= nx < n and 0 <= ny < n):
+                    break
+                if (nx, ny) == king:
+                    print("Success")
+                    return True
+                if grid[nx][ny] != '.':
+                    break  
+
 
     for rx, ry in rooks:
-        for i in range(1, n):
-            if (rx, ry - i) == king or (rx, ry + i) == king or (rx - i, ry) == king or (rx + i, ry) == king:
-                print("Success")
-                return
-    
-    for qx,qy in queens:
-        for i in range(1, n):
-            if (qx, qy - i) == king or (qx, qy + i) == king or (qx - i, qy) == king or (qx + i, qy) == king or (qx - i, qy - i) == king or (qx - i, qy + i) == king or (qx + i, qy - i) == king or (qx + i, qy + i) == king:
-                print("Success")
-                return
-    print("No checkmate")
+        for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
+            for i in range(1, n):
+                nx, ny = rx + dx * i, ry + dy * i
+                if not (0 <= nx < n and 0 <= ny < n):
+                    break
+                if (nx, ny) == king:
+                    print("Success")
+                    return True
+                if grid[nx][ny] != '.':
+                    break 
+
+    for qx, qy in queens:
+        for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1),
+                       (-1, -1), (-1, 1), (1, -1), (1, 1)]:
+            for i in range(1, n):
+                nx, ny = qx + dx * i, qy + dy * i
+                if not (0 <= nx < n and 0 <= ny < n):
+                    break
+                if (nx, ny) == king:
+                    print("Success")
+                    return True
+                if grid[nx][ny] != '.':
+                    break 
+
+    print("Fail")
+    return False
